@@ -2,15 +2,13 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/mzwiki?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
-    password: "1234"
+    password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
       ddl-auto: create
     show-sql: true
-    defer-datasource-initialization: true
-
-  sql:
-    init:
-      mode: always
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
