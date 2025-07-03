@@ -34,7 +34,17 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
+                        // Swagger 관련 경로는 무조건 허용
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
+
+                        // 로그인/회원가입 페이지 등 허용
                         .requestMatchers("/login", "/signup", "/user").permitAll()
+
+                        // 나머지는 인증 필요
                         .anyRequest().authenticated())
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
@@ -45,6 +55,7 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(
