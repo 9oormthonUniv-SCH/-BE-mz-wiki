@@ -25,4 +25,11 @@ public class Slang {
     // 사용 예시
     @Column(columnDefinition = "TEXT")
     private String example;
+
+    // 생성자
+    public Slang(String term, String meaning, String example) {
+        this.term = term;
+        this.meaning = meaning;
+        this.example = example;
+    }
 }

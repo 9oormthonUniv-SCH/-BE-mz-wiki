@@ -41,8 +41,8 @@ public class WebSecurityConfig {
                                 "/swagger-ui.html"
                         ).permitAll()
 
-                        // 로그인/회원가입 페이지 등 허용
-                        .requestMatchers("/login", "/signup", "/user").permitAll()
+                        // 로그인/회원가입 페이지 등 허용 + 개발 단계에서 모든 API 접근 허용 개발 완료 후 검색 API(/slangs/search)만 접근 허용
+                        .requestMatchers("/login", "/signup", "/user", "/slangs/**", "/slangs").permitAll()
 
                         // 나머지는 인증 필요
                         .anyRequest().authenticated())
