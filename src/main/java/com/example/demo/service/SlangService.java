@@ -2,9 +2,11 @@ package com.example.demo.service;
 
 import com.example.demo.domain.Slang;
 import com.example.demo.dto.AddSlangRequest;
+import com.example.demo.dto.UpdateSlangRequest;
 import com.example.demo.repository.SlangRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,5 +24,16 @@ public class SlangService {
     // 신조어 추가
     public Slang save(AddSlangRequest request) {
         return slangRepository.save(request.toEntity());
+    }
+
+    // 신조어 수정
+    @Transactional
+    public Slang update(long id, UpdateSlangRequest request) {
+        Slang slang = slangRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Slang not found: " + id));
+
+        slang.update(request.getTerm(), request.getMeaning(), request.getExample());
+
+        return slang;
     }
 }
