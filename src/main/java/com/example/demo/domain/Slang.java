@@ -32,4 +32,10 @@ public class Slang {
         this.meaning = meaning;
         this.example = example;
     }
+
+    public void update(String term, String meaning, String example) {
+        this.term = term;
+        this.meaning = meaning;
+        this.example = example;
+    }
 }
