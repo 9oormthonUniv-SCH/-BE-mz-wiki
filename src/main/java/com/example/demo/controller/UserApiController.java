@@ -10,6 +10,10 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Controller
@@ -27,5 +31,12 @@ public class UserApiController {
         new SecurityContextLogoutHandler().logout(request, response,
                 SecurityContextHolder.getContext().getAuthentication());
         return "redirect:/login";
+    }
+
+    @GetMapping("/user/check-email")
+    @ResponseBody
+    public Map<String, Boolean> checkEmail(@RequestParam String email) {
+        boolean isDuplicate = userService.isEmailDuplicate(email);
+        return Map.of("duplicate", isDuplicate);
     }
 }

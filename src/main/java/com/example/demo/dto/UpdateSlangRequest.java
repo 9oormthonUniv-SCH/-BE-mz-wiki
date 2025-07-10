@@ -12,3 +12,4 @@ public class UpdateSlangRequest {
     private String meaning;
     private String example;
 }
+
