@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.domain.Slang;
+import com.example.demo.domain.User;
 import com.example.demo.dto.AddSlangRequest;
 import com.example.demo.dto.UpdateSlangRequest;
 import com.example.demo.service.SlangService;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -63,4 +65,16 @@ public class SlangApiController {
         return ResponseEntity.ok()
                 .body(updateSlang);
     }
+
+    // 좋아요 누르기
+    @PostMapping("/like")
+    @Operation(summary = "좋아요 토글", description = "좋아요 누르면 등록 / 다시 누르면 취소")
+    public ResponseEntity<String> toggleSlangLike(@RequestParam Long slangId,
+                                                  @AuthenticationPrincipal User user) {
+        boolean liked = slangService.toggleLike(slangId, user.getEmail());
+        return liked ?
+                ResponseEntity.ok("좋아요 완료") :
+                ResponseEntity.ok("좋아요 취소됨");
+    }
+
 }

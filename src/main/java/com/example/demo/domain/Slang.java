@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -25,6 +26,10 @@ public class Slang {
     // 사용 예시
     @Column(columnDefinition = "TEXT")
     private String example;
+
+    // 좋아요 수 (초기 값 0)
+    @Column(nullable = false)
+    private int likeCount = 0;
 
     // 생성자
     public Slang(String term, String meaning, String example) {
