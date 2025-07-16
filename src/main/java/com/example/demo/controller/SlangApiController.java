@@ -66,6 +66,23 @@ public class SlangApiController {
                 .body(updateSlang);
     }
 
+    // 신조어 삭제
+    @DeleteMapping("/{slang_id}")
+    @Operation(
+            summary = "신조어 수정",
+            description = "신조어 ID에 해당하는 신조어를 삭제합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "신조어 삭제 성공"),
+                    @ApiResponse(responseCode = "404", description = "해당 ID의 신조어를 찾을 수 없음"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류")
+            }
+    )
+    public ResponseEntity<String> deleteSlang(@PathVariable long slang_id) {
+        slangService.delete(slang_id);
+        return ResponseEntity.ok("신조어가 삭제되었습니다.");
+    }
+
+
     // 좋아요 누르기
     @PostMapping("/like")
     @Operation(summary = "좋아요 토글", description = "좋아요 누르면 등록 / 다시 누르면 취소")
