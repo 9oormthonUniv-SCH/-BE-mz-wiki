@@ -1,20 +1,26 @@
 package com.example.demo.service;
 
+import com.example.demo.domain.SlangLike;
 import com.example.demo.domain.Slang;
+import com.example.demo.domain.User;
 import com.example.demo.dto.AddSlangRequest;
 import com.example.demo.dto.UpdateSlangRequest;
+import com.example.demo.repository.SlangLikeRepository;
 import com.example.demo.repository.SlangRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class SlangService {
 
     private final SlangRepository slangRepository;
+    private final SlangLikeRepository slangLikeRepository;
+    private final UserService userService;
 
     // 신조어 검색
     public List<Slang> searchSlangs(String keyword) {
@@ -36,4 +42,31 @@ public class SlangService {
 
         return slang;
     }
+
+    // 좋아요
+    public boolean toggleLike(Long slangId, String email) {
+        Slang slang = slangRepository.findById(slangId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 신조어가 없습니다."));
+        User user = userService.findByEmail(email);
+
+        Optional<SlangLike> existingLike = slangLikeRepository.findByUserAndSlang(user, slang);
+
+        if (existingLike.isPresent()) {
+            slangLikeRepository.delete(existingLike.get());
+            slang.setLikeCount(slang.getLikeCount() - 1);
+            slangRepository.save(slang);
+            return false;  // 좋아요 취소됨
+        } else {
+            SlangLike newLike = SlangLike.builder()
+                    .user(user)
+                    .slang(slang)
+                    .build();
+            slangLikeRepository.save(newLike);
+            slang.setLikeCount(slang.getLikeCount() + 1);
+            slangRepository.save(slang);
+            return true;  // 좋아요 등록됨
+        }
+    }
+
+
 }
