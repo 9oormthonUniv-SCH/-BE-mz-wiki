@@ -43,6 +43,14 @@ public class SlangService {
         return slang;
     }
 
+    // 신조어 삭제
+    public void delete(Long slang_id) {
+        // 예외처리....:3
+        Slang slang = slangRepository.findById(slang_id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 신조어입니다."));
+        slangRepository.deleteById(slang_id);
+    }
+
     // 좋아요
     public boolean toggleLike(Long slangId, String email) {
         Slang slang = slangRepository.findById(slangId)
