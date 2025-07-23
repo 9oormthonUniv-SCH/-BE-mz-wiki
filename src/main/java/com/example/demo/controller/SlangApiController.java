@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/slangs")
 @RequiredArgsConstructor
-@Tag(name = "신조어 API", description = "신조어 CRUD 기능을 제공합니다")
+@Tag(name = "신조어 API", description = "신조어 CRUD 및 좋아요 기능을 제공합니다")
 public class SlangApiController {
 
     private final SlangService slangService;
@@ -69,7 +70,7 @@ public class SlangApiController {
     // 신조어 삭제
     @DeleteMapping("/{slang_id}")
     @Operation(
-            summary = "신조어 수정",
+            summary = "신조어 삭제",
             description = "신조어 ID에 해당하는 신조어를 삭제합니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "신조어 삭제 성공"),
@@ -82,16 +83,30 @@ public class SlangApiController {
         return ResponseEntity.ok("신조어가 삭제되었습니다.");
     }
 
+    // 좋아요 추가
+    @PostMapping("/{slangId}/like")
+    @Operation(summary = "좋아요 추가", description = "특정 신조어에 좋아요를 추가합니다.")
+    public ResponseEntity<Void> addLike(@PathVariable Long slangId,
+                                        @AuthenticationPrincipal UserDetails userDetails) {
+        slangService.addLike(slangId, userDetails.getUsername());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 
-    // 좋아요 누르기
-    @PostMapping("/like")
-    @Operation(summary = "좋아요 토글", description = "좋아요 누르면 등록 / 다시 누르면 취소")
-    public ResponseEntity<String> toggleSlangLike(@RequestParam Long slangId,
-                                                  @AuthenticationPrincipal User user) {
-        boolean liked = slangService.toggleLike(slangId, user.getEmail());
-        return liked ?
-                ResponseEntity.ok("좋아요 완료") :
-                ResponseEntity.ok("좋아요 취소됨");
+    // 좋아요 삭제
+    @DeleteMapping("/{slangId}/like")
+    @Operation(summary = "좋아요 취소", description = "특정 신조어에 눌렀던 좋아요를 취소합니다.")
+    public ResponseEntity<Void> deleteLike(@PathVariable Long slangId,
+                                           @AuthenticationPrincipal UserDetails userDetails) {
+        slangService.deleteLike(slangId, userDetails.getUsername());
+        return ResponseEntity.ok().build();
+    }
+
+    // 좋아요 목록 조회
+    @GetMapping("/likes")
+    @Operation(summary = "좋아요한 신조어 목록 조회", description = "로그인한 유저가 좋아요한 신조어들을 반환합니다.")
+    public ResponseEntity<List<Slang>> getLikedSlangs(@AuthenticationPrincipal User user) {
+        List<Slang> liked = slangService.getLikedSlangs(user.getEmail());
+        return ResponseEntity.ok(liked);
     }
 
 }
