@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface SlangLikeRepository extends JpaRepository<SlangLike, Long> {
-    Optional<SlangLike> findByUserAndSlang(User user, Slang slang);
-    Long countBySlang(Slang slang);
+    Optional<SlangLike> findBySlangIdAndUserUsername(Long slangId, String email);
+    boolean existsBySlangIdAndUserUsername(Long slangId, String email);
 }

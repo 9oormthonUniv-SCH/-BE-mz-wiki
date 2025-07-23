@@ -3,10 +3,12 @@ package com.example.demo.service;
 import com.example.demo.domain.SlangLike;
 import com.example.demo.domain.Slang;
 import com.example.demo.domain.User;
+import com.example.demo.dto.AddSlangLikeRequest;
 import com.example.demo.dto.AddSlangRequest;
 import com.example.demo.dto.UpdateSlangRequest;
 import com.example.demo.repository.SlangLikeRepository;
 import com.example.demo.repository.SlangRepository;
+import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +22,7 @@ public class SlangService {
 
     private final SlangRepository slangRepository;
     private final SlangLikeRepository slangLikeRepository;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     // 신조어 검색
     public List<Slang> searchSlangs(String keyword) {
@@ -51,30 +53,31 @@ public class SlangService {
         slangRepository.deleteById(slang_id);
     }
 
-    // 좋아요
-    public boolean toggleLike(Long slangId, String email) {
-        Slang slang = slangRepository.findById(slangId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 신조어가 없습니다."));
-        User user = userService.findByEmail(email);
-
-        Optional<SlangLike> existingLike = slangLikeRepository.findByUserAndSlang(user, slang);
-
-        if (existingLike.isPresent()) {
-            slangLikeRepository.delete(existingLike.get());
-            slang.setLikeCount(slang.getLikeCount() - 1);
-            slangRepository.save(slang);
-            return false;  // 좋아요 취소됨
-        } else {
-            SlangLike newLike = SlangLike.builder()
-                    .user(user)
-                    .slang(slang)
-                    .build();
-            slangLikeRepository.save(newLike);
-            slang.setLikeCount(slang.getLikeCount() + 1);
-            slangRepository.save(slang);
-            return true;  // 좋아요 등록됨
+    // 좋아요 추가
+    public void addLike(Long slangId, String email) {
+        if (slangLikeRepository.existsBySlangIdAndUserEmail(slangId, email)) {
+            throw new IllegalStateException("이미 좋아요를 누른 상태입니다.");
         }
+
+        Slang slang = slangRepository.findById(slangId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 신조어입니다."));
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        AddSlangLikeRequest request = AddSlangLikeRequest.of(slang, user);
+        slangLikeRepository.save(request.toEntity());
     }
+
+
+    // 좋아요 삭제
+    public void deleteLike(Long slangId, String email) {
+        SlangLike like = slangLikeRepository.findBySlangIdAndUserEmail(slangId, email)
+                .orElseThrow(() -> new IllegalStateException("좋아요를 누르지 않았습니다."));
+
+        slangLikeRepository.delete(like);
+    }
+
 
 
 }
