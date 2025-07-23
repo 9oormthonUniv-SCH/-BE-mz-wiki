@@ -101,5 +101,12 @@ public class SlangApiController {
         return ResponseEntity.ok().build();
     }
 
+    // 좋아요 목록 조회
+    @GetMapping("/likes")
+    @Operation(summary = "좋아요한 신조어 목록 조회", description = "로그인한 유저가 좋아요한 신조어들을 반환합니다.")
+    public ResponseEntity<List<Slang>> getLikedSlangs(@AuthenticationPrincipal User user) {
+        List<Slang> liked = slangService.getLikedSlangs(user.getEmail());
+        return ResponseEntity.ok(liked);
+    }
 
 }

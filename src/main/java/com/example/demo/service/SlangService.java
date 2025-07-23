@@ -78,6 +78,9 @@ public class SlangService {
         slangLikeRepository.delete(like);
     }
 
-
+    // 좋아요 목록 조회
+    public List<Slang> getLikedSlangs(String email) {
+        return slangLikeRepository.findLikedSlangsByUserEmail(email);
+    }
 
 }
