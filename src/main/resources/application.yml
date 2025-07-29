@@ -14,3 +14,9 @@ spring:
   sql:
     init:
       mode: always
+
+naver:
+  client-id: UrcnJLt7JOj2rQVcm6Sb
+  client-secret: TkkStAHVWU
+  redirect-uri: http://localhost:8080/login/naver/callback
+  state: randomString123
