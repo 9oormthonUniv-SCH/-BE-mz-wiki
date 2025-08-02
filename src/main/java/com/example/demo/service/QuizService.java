@@ -5,6 +5,7 @@ import com.example.demo.domain.Slang;
 import com.example.demo.domain.User;
 import com.example.demo.dto.QuizAnswerRequest;
 import com.example.demo.dto.QuizDTO;
+import com.example.demo.dto.QuizHistoryDTO;
 import com.example.demo.repository.QuizRepository;
 import com.example.demo.repository.SlangRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,5 +57,14 @@ public class QuizService {
         quizRepository.save(quiz);
 
         return correct;
+    }
+
+    public List<QuizHistoryDTO> getRecentHistory(User user, int days) {
+        LocalDate fromDate = LocalDate.now().minusDays(days);
+        List<Quiz> quizzes = quizRepository.findByUserAndQuizDateAfterOrderByQuizDateDesc(user, fromDate);
+
+        return quizzes.stream()
+                .map(q -> new QuizHistoryDTO(q.getQuizDate(), q.getQuestion(), q.isCorrect()))
+                .collect(Collectors.toList());
     }
 }
