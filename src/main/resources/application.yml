@@ -10,9 +10,6 @@ spring:
       ddl-auto: create     # 매번 DROP+CREATE됨 (운영에선 update/validate 권장)
     show-sql: true
     defer-datasource-initialization: true   # ★ 테이블 생성 후 data.sql 실행
-    properties:
-      # Hibernate 6에서는 명시 안 해도 MySQL 자동 인식됨. 굳이 적을 거면 아래처럼:
-      hibernate.dialect: org.hibernate.dialect.MySQLDialect
 
   sql:
     init:
