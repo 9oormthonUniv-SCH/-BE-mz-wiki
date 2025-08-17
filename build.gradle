@@ -32,8 +32,7 @@ dependencies {
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
 	// MySQL Driver (중복 방지 - runtimeOnly로 하나만 사용)
-	runtimeOnly 'com.mysql:mysql-connector-j' // 또는 아래 둘 중 하나만 유지
-	// implementation 'mysql:mysql-connector-java:8.0.32'
+	runtimeOnly 'com.mysql:mysql-connector-j'
 
 	// Lombok (자동 Getter/Setter/Builder 등)
 	compileOnly 'org.projectlombok:lombok'
@@ -45,9 +44,6 @@ dependencies {
 	// 테스트
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-
-	// 개발용 H2 DB
-	runtimeOnly 'com.h2database:h2'
 }
 
 tasks.named('test') {

@@ -2,6 +2,10 @@ package com.example.demo.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -29,7 +33,16 @@ public class Slang {
 
     // 좋아요 수 (초기 값 0)
     @Column(nullable = false)
+    @Builder.Default
     private int likeCount = 0;
+
+    // 등록 시간
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    // 수정 시간
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
     // 생성자
     public Slang(String term, String meaning, String example) {

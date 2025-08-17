@@ -1,17 +1,17 @@
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: ${MYSQL_URL}
     driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
 
   jpa:
     hibernate:
-      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
-    show-sql: ${SPRING_JPA_SHOW_SQL}
-    defer-datasource-initialization: true
+      ddl-auto: create     # 매번 DROP+CREATE됨 (운영에선 update/validate 권장)
+    show-sql: true
+    defer-datasource-initialization: true   # ★ 테이블 생성 후 data.sql 실행
 
   sql:
     init:
-      mode: always
-
+      mode: always              # data.sql 항상 실행(외부 DB 포함)
+      continue-on-error: true   # 중간 에러 나도 나머지 계속
